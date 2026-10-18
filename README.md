@@ -42,4 +42,3 @@ python -m pytest
 ## Planning algorithm
 
 Planning uses Kahn's topological-sort algorithm. A min-heap selects ready tasks alphabetically, making the result stable. Execution layers contain all tasks ready at the same depth. The running time is `O((V + E) log V)` with heap ordering, and memory use is `O(V + E)`, where `V` is the number of tasks and `E` is the number of dependencies. Missing dependencies and cycles raise `WorkflowValidationError` with a diagnostic message.
-
