@@ -1,10 +1,10 @@
 # PyFlow
 
-PyFlow is a small Python 3.11+ library for describing data tasks, validating their dependency graph, and building deterministic execution plans.
+PyFlow to niewielka biblioteka dla Pythona 3.11+, która pozwala definiować zadania przetwarzania danych, sprawdzać ich zależności i wyznaczać deterministyczny plan wykonania.
 
-## Install
+## Instalacja
 
-Create and activate a virtual environment, then install the package with its development dependencies:
+Utwórz i aktywuj środowisko wirtualne, a następnie zainstaluj pakiet wraz z zależnościami deweloperskimi:
 
 ```bash
 python -m venv .venv
@@ -13,7 +13,7 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 ```
 
-## Example
+## Przykład
 
 ```python
 from pyflow import Task, Workflow, execution_layers, topological_order
@@ -31,14 +31,15 @@ print(topological_order(workflow))  # ['extract', 'total']
 print(execution_layers(workflow))   # [['extract'], ['total']]
 ```
 
-A task function accepts two mappings: results from its direct dependencies (`inputs`) and its configured `params`. Task parameters and dependencies are snapshotted when the task is created.
+Funkcja zadania przyjmuje dwa mapowania: wyniki bezpośrednich zależności (`inputs`) oraz skonfigurowane parametry (`params`). Parametry i zależności są kopiowane przy tworzeniu zadania, więc późniejsze zmiany w danych źródłowych nie zmieniają jego konfiguracji.
 
-## Tests
+## Testy
 
 ```bash
 python -m pytest
 ```
 
-## Planning algorithm
+## Algorytm planowania
 
-Planning uses Kahn's topological-sort algorithm. A min-heap selects ready tasks alphabetically, making the result stable. Execution layers contain all tasks ready at the same depth. The running time is `O((V + E) log V)` with heap ordering, and memory use is `O(V + E)`, where `V` is the number of tasks and `E` is the number of dependencies. Missing dependencies and cycles raise `WorkflowValidationError` with a diagnostic message.
+Planowanie wykorzystuje algorytm sortowania topologicznego Kahna. Kopiec minimalny wybiera gotowe zadania w kolejności alfabetycznej, dzięki czemu wynik jest deterministyczny. Warstwy wykonania grupują zadania gotowe na tym samym poziomie. Złożoność czasowa wynosi `O((V + E) log V)`, a pamięciowa `O(V + E)`, gdzie `V` oznacza liczbę zadań, a `E` liczbę zależności. Brakujące zależności i cykle powodują wyjątek `WorkflowValidationError` z komunikatem diagnostycznym.
+
