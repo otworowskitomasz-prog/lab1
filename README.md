@@ -1,10 +1,10 @@
 # PyFlow
 
-PyFlow to niewielka biblioteka dla Pythona 3.11+, kt�ra pozwala definiowa� workflowy danych, sprawdza� ich zale�no�ci i wykonywa� zadania synchronicznie.
+PyFlow to niewielka biblioteka dla Pythona 3.11+, która pozwala definiować workflowy danych, sprawdzać ich zależności i wykonywać zadania synchronicznie.
 
 ## Instalacja
 
-Utw�rz i aktywuj �rodowisko wirtualne, a nast�pnie zainstaluj pakiet wraz z zale�no�ciami deweloperskimi:
+Utwórz i aktywuj środowisko wirtualne, a następnie zainstaluj pakiet wraz z zależnościami deweloperskimi:
 
 ```bash
 python -m venv .venv
@@ -15,7 +15,7 @@ python -m pip install -e ".[dev]"
 
 ## Uruchomienie workflowu
 
-Funkcja zadania ma posta� `function(inputs, params)`. `inputs` zawiera wyniki wy��cznie bezpo�rednich zale�no�ci, pod kluczami b�d�cymi ich nazwami. `params` zawiera konfiguracj� zadania.
+Funkcja zadania ma postać `function(inputs, params)`. `inputs` zawiera wyniki wyłącznie bezpośrednich zależności, pod kluczami będącymi ich nazwami. `params` zawiera konfigurację zadania.
 
 ```python
 from pyflow import Task, Workflow, run
@@ -34,22 +34,22 @@ print(result.outputs["suma"])  # 11
 print(result.succeeded)        # True
 ```
 
-Silnik najpierw waliduje workflow, a nast�pnie korzysta z planera topologicznego z Laboratorium 1. Pusty workflow zwraca poprawny wynik z pustymi mapami.
+Silnik najpierw waliduje workflow, a następnie korzysta z planera topologicznego z Laboratorium 1. Pusty workflow zwraca poprawny wynik z pustymi mapami.
 
 ## Wynik i statusy
 
-`RunResult` udost�pnia:
+`RunResult` udostępnia:
 
-- `outputs` - mapowanie nazw zada� na ich wyniki;
-- `task_states` - mapowanie nazw zada� na `TaskState` z polem `status`, czasem startu i ko�ca, `duration_seconds`, wynikiem oraz ewentualnym b��dem;
-- `duration_seconds` - czas ca�ego przebiegu;
-- `succeeded` - informacj�, czy wszystkie zadania zako�czy�y si� powodzeniem.
+- `outputs` - mapowanie nazw zadań na ich wyniki;
+- `task_states` - mapowanie nazw zadań na `TaskState` z polem `status`, czasem startu i końca, `duration_seconds`, wynikiem oraz ewentualnym błędem;
+- `duration_seconds` - czas całego przebiegu;
+- `succeeded` - informację, czy wszystkie zadania zakończyły się powodzeniem.
 
-Statusy zadania to `PENDING`, `RUNNING`, `SUCCEEDED`, `FAILED` i `SKIPPED`. Czasy s� mierzone monotonicznym zegarem `time.perf_counter`.
+Statusy zadania to `PENDING`, `RUNNING`, `SUCCEEDED`, `FAILED` i `SKIPPED`. Czasy są mierzone monotonicznym zegarem `time.perf_counter`.
 
-## Polityka b��d�w
+## Polityka błędów
 
-Po b��dzie zadania silnik oznacza je jako `FAILED`, pomija jego zadania zale�ne, a niezale�ne zadania wykonuje dalej. Po przej�ciu planu zg�asza `TaskExecutionError` dla pierwszej awarii; oryginalny wyj�tek jest dost�pny jako `__cause__`, a kompletny raport przebiegu jako `error.result`.
+Po błędzie zadania silnik oznacza je jako `FAILED`, pomija jego zadania zależne, a niezależne zadania wykonuje dalej. Po przejściu planu zgłasza `TaskExecutionError` dla pierwszej awarii; oryginalny wyjątek jest dostępny jako `__cause__`, a kompletny raport przebiegu jako `error.result`.
 
 ```python
 from pyflow import TaskExecutionError, run
@@ -62,15 +62,15 @@ except TaskExecutionError as error:
     print(error.__cause__)
 ```
 
-## Przyk�ad CSV -> JSON
+## Przykład CSV -> JSON
 
-Przyk�adowy workflow odczytuje `examples/data/sales.csv`, odrzuca niepoprawne rekordy, agreguje kwoty wed�ug kategorii i zapisuje `examples/output/report.json`. Dane s� lokalne, a przyk�ad nie korzysta z sieci.
+Przykładowy workflow odczytuje `examples/data/sales.csv`, odrzuca niepoprawne rekordy, agreguje kwoty według kategorii i zapisuje `examples/output/report.json`. Dane są lokalne, a przykład nie korzysta z sieci.
 
 ```bash
 python examples/end_to_end.py
 ```
 
-Skrypt wypisuje �cie�k� raportu oraz czas wykonania ka�dego zadania i ca�ego workflowu.
+Skrypt wypisuje ścieżkę raportu oraz czas wykonania każdego zadania i całego workflowu.
 
 ## Testy
 
@@ -78,8 +78,9 @@ Skrypt wypisuje �cie�k� raportu oraz czas wykonania ka�dego zadania i ca
 python -m pytest
 ```
 
-Testy obejmuj� przep�yw wynik�w i parametr�w, kolejno�� wykonania, pusty workflow, obs�ug� awarii i pomijanie zale�nych zada�, wykonanie niezale�nych zada� oraz przyk�ad CSV -> JSON.
+Testy obejmują przepływ wyników i parametrów, kolejność wykonania, pusty workflow, obsługę awarii i pomijanie zależnych zadań, wykonanie niezależnych zadań oraz przykład CSV -> JSON.
 
 ## Algorytm planowania
 
-Planowanie wykorzystuje algorytm sortowania topologicznego Kahna. Kopiec minimalny wybiera gotowe zadania w kolejno�ci alfabetycznej, dzi�ki czemu wynik jest deterministyczny. Warstwy wykonania grupuj� zadania gotowe na tym samym poziomie. Z�o�ono�� czasowa wynosi `O((V + E) log V)`, a pami�ciowa `O(V + E)`, gdzie `V` oznacza liczb� zada�, a `E` liczb� zale�no�ci. Brakuj�ce zale�no�ci i cykle powoduj� wyj�tek `WorkflowValidationError` z komunikatem diagnostycznym.
+Planowanie wykorzystuje algorytm sortowania topologicznego Kahna. Kopiec minimalny wybiera gotowe zadania w kolejności alfabetycznej, dzięki czemu wynik jest deterministyczny. Warstwy wykonania grupują zadania gotowe na tym samym poziomie. Złożoność czasowa wynosi `O((V + E) log V)`, a pamięciowa `O(V + E)`, gdzie `V` oznacza liczbę zadań, a `E` liczbę zależności. Brakujące zależności i cykle powodują wyjątek `WorkflowValidationError` z komunikatem diagnostycznym.
+
